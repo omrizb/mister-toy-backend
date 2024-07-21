@@ -6,7 +6,7 @@ import path from 'path'
 
 import { utilService } from './services/util.service.js'
 import { loggerService } from './services/logger.service.js'
-import { itemService } from './services/item.service.js'
+import { toyService } from './services/toy.service.js'
 import { userService } from './services/user.service.js'
 
 const PORT = 3030
@@ -30,26 +30,26 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(cors(corsOptions))
 
-// Item
-app.get('/api/item', (req, res) => {
-    itemService.getDefaultQueryParams()
+// Toy
+app.get('/api/toy', (req, res) => {
+    toyService.getDefaultQueryParams()
         .then(defaultQueryParams => {
             const reqQueryParams = (req.query) ? qs.parse(req.query[0]) : {}
             const queryParams = utilService.deepMergeObjectsSourceKeysOnly(defaultQueryParams, reqQueryParams)
             return queryParams
         })
         .then(queryParams => {
-            itemService.query(queryParams)
-                .then(items => res.send(items))
+            toyService.query(queryParams)
+                .then(toys => res.send(toys))
                 .catch(err => {
-                    loggerService.error(`Couldn't get items: ${err}`)
-                    res.status(500).send(`Couldn't get items: ${err}`)
+                    loggerService.error(`Couldn't get toys: ${err}`)
+                    res.status(500).send(`Couldn't get toys: ${err}`)
                 })
         })
 })
 
-app.get('/api/item/default-query-params', (req, res) => {
-    itemService.getDefaultQueryParams()
+app.get('/api/toy/default-query-params', (req, res) => {
+    toyService.getDefaultQueryParams()
         .then(queryParams => res.send(queryParams))
         .catch(err => {
             loggerService.error(`Couldn't get default query params: ${err}`)
@@ -57,8 +57,8 @@ app.get('/api/item/default-query-params', (req, res) => {
         })
 })
 
-app.get('/api/item/labels', (req, res) => {
-    itemService.getLabels()
+app.get('/api/toy/labels', (req, res) => {
+    toyService.getLabels()
         .then(labels => res.send(labels))
         .catch(err => {
             loggerService.error(`Couldn't get labels: ${err}`)
@@ -66,8 +66,8 @@ app.get('/api/item/labels', (req, res) => {
         })
 })
 
-app.get('/api/item/page-count', (req, res) => {
-    itemService.getPageCount()
+app.get('/api/toy/page-count', (req, res) => {
+    toyService.getPageCount()
         .then(count => res.send(count + ''))
         .catch(err => {
             loggerService.error(`Couldn't get page count: ${err}`)
@@ -75,68 +75,68 @@ app.get('/api/item/page-count', (req, res) => {
         })
 })
 
-app.get('/api/item/:id', (req, res) => {
+app.get('/api/toy/:id', (req, res) => {
     const { id } = req.params
-    const visitedItems = req.cookies.visitedItems || []
+    const visitedToys = req.cookies.visitedToys || []
 
-    if (!visitedItems.find(cookieItemId => cookieItemId === id)) {
-        if (visitedItems.length >= MAX_VISITED_ITEMS) {
+    if (!visitedToys.find(cookieToyId => cookieToyId === id)) {
+        if (visitedToys.length >= MAX_VISITED_ITEMS) {
             return res.status(401).send('Wait for a bit')
         }
-        visitedItems.push(id)
+        visitedToys.push(id)
     }
 
-    itemService.get(id)
-        .then(item => {
-            res.cookie('visitedItems', visitedItems, { maxAge: COOKIE_MAX_AGE })
-            return res.send(item)
+    toyService.get(id)
+        .then(toy => {
+            res.cookie('visitedToys', visitedToys, { maxAge: COOKIE_MAX_AGE })
+            return res.send(toy)
         })
         .catch(err => {
-            loggerService.error(`Couldn't get item ${id}: ${err}`)
-            res.status(500).send(`Couldn't get item ${id}: ${err}`)
+            loggerService.error(`Couldn't get toy ${id}: ${err}`)
+            res.status(500).send(`Couldn't get toy ${id}: ${err}`)
         })
 })
 
-app.post('/api/item', (req, res) => {
-    const itemToSave = _itemFromJSON(req.body)
+app.post('/api/toy', (req, res) => {
+    const toyToSave = _toyFromJSON(req.body)
 
-    itemService.save(itemToSave)
-        .then(itemToSave => {
-            loggerService.info(`Item ${itemToSave._id} saved successfully`)
-            res.send(itemToSave)
+    toyService.save(toyToSave)
+        .then(toyToSave => {
+            loggerService.info(`Toy ${toyToSave._id} saved successfully`)
+            res.send(toyToSave)
         })
         .catch(err => {
-            loggerService.error(`Couldn't add item: ${err}`)
-            res.status(500).send(`Couldn't add item: ${err}`)
+            loggerService.error(`Couldn't add toy: ${err}`)
+            res.status(500).send(`Couldn't add toy: ${err}`)
         })
 
 })
 
-app.put('/api/item/:id', (req, res) => {
-    const itemToSave = _itemFromJSON(req.body)
-    itemToSave._id = req.body._id
+app.put('/api/toy/:id', (req, res) => {
+    const toyToSave = _toyFromJSON(req.body)
+    toyToSave._id = req.body._id
 
-    itemService.save(itemToSave)
-        .then(itemToSave => {
-            loggerService.info(`Item ${itemToSave._id} saved successfully`)
-            res.send(itemToSave)
+    toyService.save(toyToSave)
+        .then(toyToSave => {
+            loggerService.info(`Toy ${toyToSave._id} saved successfully`)
+            res.send(toyToSave)
         })
         .catch(err => {
-            loggerService.error(`Couldn't update item: ${err}`)
-            res.status(500).send(`Couldn't update item: ${err}`)
+            loggerService.error(`Couldn't update toy: ${err}`)
+            res.status(500).send(`Couldn't update toy: ${err}`)
         })
 })
 
-app.delete('/api/item/:id', (req, res) => {
+app.delete('/api/toy/:id', (req, res) => {
     const { id } = req.params
-    itemService.remove(id)
-        .then(item => {
-            loggerService.info(`Item ${item._id} removed successfully`)
-            res.send(item)
+    toyService.remove(id)
+        .then(toy => {
+            loggerService.info(`Toy ${toy._id} removed successfully`)
+            res.send(toy)
         })
         .catch(err => {
-            loggerService.error(`Couldn't remove item: ${err}`)
-            res.status(500).send(`Couldn't remove item: ${err}`)
+            loggerService.error(`Couldn't remove toy: ${err}`)
+            res.status(500).send(`Couldn't remove toy: ${err}`)
         })
 })
 
@@ -173,14 +173,14 @@ app.delete('/api/user/:userId', (req, res) => {
     if (!loggedInUser?.isAdmin) return res.status(401).send('Not allowed')
 
     const { userId } = req.params
-    itemService.hasItems(userId)
-        .then(hasItems => {
-            if (!hasItems) {
+    toyService.hasToys(userId)
+        .then(hasToys => {
+            if (!hasToys) {
                 userService.remove(userId)
                     .then(() => res.send('Removed!'))
                     .catch(err => res.status(401).send(err))
             } else {
-                res.status(401).send('Cannot delete user with items')
+                res.status(401).send('Cannot delete user with toys')
             }
         })
 })
@@ -229,13 +229,13 @@ app.get('/**', (req, res) => {
 // Start server
 app.listen(PORT, () => console.log(`Server is up. Listening port ${PORT}.`))
 
-function _itemFromJSON(itemJSON) {
-    const { title, description, severity, labels } = itemJSON
-    const item = {
+function _toyFromJSON(toyJSON) {
+    const { title, description, severity, labels } = toyJSON
+    const toy = {
         title: title || '',
         description: description || '',
         severity: +severity || 0,
         labels: labels || []
     }
-    return item
+    return toy
 }
