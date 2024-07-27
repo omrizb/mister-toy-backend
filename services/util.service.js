@@ -9,7 +9,9 @@ export const utilService = {
     download,
     httpGet,
     makeId,
-    deepMergeObjectsSourceKeysOnly
+    deepMergeObjectsSourceKeysOnly,
+    getRandomIntInclusive,
+    getRandomItems,
 }
 
 
@@ -105,4 +107,24 @@ function convertType(sourceValue, targetValue) {
         default:
             return targetValue
     }
+}
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
+}
+
+function getRandomItems(items, size = undefined, duplicationAllowed = false) {
+    if (size && size > items.length && !duplicationAllowed) return
+
+    const res = []
+    const srcArray = (duplicationAllowed) ? items : [...items]
+    for (let i = 0; i < size; i++) {
+        if (!duplicationAllowed && srcArray.length === 0) break
+        const randIdx = Math.floor(Math.random() * srcArray.length)
+        res.push(srcArray[randIdx])
+        if (!duplicationAllowed) srcArray.splice(randIdx, 1)
+    }
+    return (size === undefined) ? res[0] : res
 }

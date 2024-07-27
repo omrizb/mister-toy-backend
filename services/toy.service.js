@@ -43,7 +43,11 @@ function query(queryParams = _getDefaultQueryParams()) {
     const startIdx = pageIdx * PAGE_SIZE
     filteredToys = filteredToys.slice(startIdx, startIdx + PAGE_SIZE)
 
-    return Promise.resolve(filteredToys)
+    return Promise.resolve({
+        filteredToys,
+        queryParams,
+        totalNumOfToys: toys.length
+    })
 }
 
 function get(toyId) {
@@ -84,7 +88,6 @@ function save(toyToSave) {
 function getEmptyToy() {
     return Promise.resolve({
         title: 'New toy',
-        description: '',
         price: 0,
         labels: [],
         creator: {
