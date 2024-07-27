@@ -120,11 +120,12 @@ function getRandomItems(items, size = undefined, duplicationAllowed = false) {
 
     const res = []
     const srcArray = (duplicationAllowed) ? items : [...items]
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < size || 1; i++) {
         if (!duplicationAllowed && srcArray.length === 0) break
         const randIdx = Math.floor(Math.random() * srcArray.length)
         res.push(srcArray[randIdx])
         if (!duplicationAllowed) srcArray.splice(randIdx, 1)
     }
+    console.log(res)
     return (size === undefined) ? res[0] : res
 }
