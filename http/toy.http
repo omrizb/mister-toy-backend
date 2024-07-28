@@ -1,0 +1,33 @@
+GET http://127.0.0.1:3030/api/toy
+
+###
+
+GET http://127.0.0.1:3030/api/toy/123
+
+###
+
+GET http://127.0.0.1:3030/api/toy/labels
+
+###
+
+POST http://127.0.0.1:3030/api/toy
+content-type: application/json
+
+{
+    "title": "Nice Toy!",
+    "description": "This is a toy...",
+    "severity": 0,
+    "labels": ["Robot"]
+}
+
+###
+
+PUT http://127.0.0.1:3030/api/toy/Bo9chR
+content-type: application/json
+
+{
+    "_id": "Bo9chR",
+    "title": "Nice1111 Toy!",
+    "severity": 0,
+    "labels": ["Robot"]
+}

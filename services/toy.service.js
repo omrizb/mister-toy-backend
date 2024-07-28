@@ -40,8 +40,8 @@ function query(queryParams = _getDefaultQueryParams()) {
         filteredToys = filteredToys.sort((toy1, toy2) => (toy1[sortBy] - toy2[sortBy]) * sortDir)
     }
 
-    const startIdx = pageIdx * PAGE_SIZE
-    filteredToys = filteredToys.slice(startIdx, startIdx + PAGE_SIZE)
+    // const startIdx = pageIdx * PAGE_SIZE
+    // filteredToys = filteredToys.slice(startIdx, startIdx + PAGE_SIZE)
 
     return Promise.resolve({
         filteredToys,
@@ -74,7 +74,9 @@ function save(toyToSave) {
 
     if (toyToSave._id) {
         const idx = toys.findIndex(toy => toy._id === toyToSave._id)
-        toys.splice(idx, 1, toyToSave)
+        if (idx === -1) return Promise.reject(`Toy with id '${toyToSave._id}' does not exist.`)
+        toyToSave = { ...toys[idx], ...toyToSave }
+        toys[idx] = toyToSave
     } else {
         toyToSave._id = utilService.makeId()
         toyToSave.createdAt = Date.now()
