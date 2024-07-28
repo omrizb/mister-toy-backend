@@ -230,12 +230,13 @@ app.get('/**', (req, res) => {
 app.listen(PORT, () => console.log(`Server is up. Listening port ${PORT}.`))
 
 function _toyFromJSON(toyJSON) {
-    const { title, description, severity, labels } = toyJSON
+    const { name, description, price, labels, inStock } = toyJSON
     const toy = {
-        title: title || '',
+        name: name || '',
         description: description || '',
-        severity: +severity || 0,
-        labels: labels || []
+        price: +price || 0,
+        labels: labels || [],
+        inStock: inStock || ''
     }
     return toy
 }
