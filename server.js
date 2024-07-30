@@ -9,7 +9,6 @@ import { loggerService } from './services/logger.service.js'
 import { toyService } from './services/toy.service.js'
 import { userService } from './services/user.service.js'
 
-const PORT = 3030
 const COOKIE_MAX_AGE = 10 * 60 * 1000
 const MAX_VISITED_ITEMS = 10
 
@@ -227,7 +226,8 @@ app.get('/**', (req, res) => {
 })
 
 // Start server
-app.listen(PORT, () => console.log(`Server is up. Listening port ${PORT}.`))
+const port = process.env.PORT || 3030
+app.listen(port, () => loggerService.info(`Server is up. Listening port ${port}.`))
 
 function _toyFromJSON(toyJSON) {
     const { name, description, price, labels, inStock } = toyJSON
