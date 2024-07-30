@@ -34,7 +34,7 @@ app.use(cors(corsOptions))
 app.get('/api/toy', (req, res) => {
     toyService.getDefaultQueryParams()
         .then(defaultQueryParams => {
-            const reqQueryParams = (req.query) ? qs.parse(req.query[0]) : {}
+            const reqQueryParams = (req.query) ? qs.parse(req.query) : {}
             const queryParams = utilService.deepMergeObjectsSourceKeysOnly(defaultQueryParams, reqQueryParams)
             return queryParams
         })

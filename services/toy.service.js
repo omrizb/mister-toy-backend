@@ -18,20 +18,22 @@ const toys = utilService.readJsonFile(DATA_PATH)
 
 function query(queryParams = _getDefaultQueryParams()) {
     let filteredToys = toys
-    const { txt, maxPrice, labels, sortBy, sortDir, pageIdx } = queryParams
-
+    const { txt, minPrice, maxPrice, labels, sortBy, sortDir, pageIdx } = queryParams
     if (txt) {
-        const regExp = new RegExp(filterBy.txt, 'i')
+        const regExp = new RegExp(txt, 'i')
         filteredToys = filteredToys.filter(toy => (
-            regExp.test(toy.title) ||
+            regExp.test(toy.name) ||
             regExp.test(toy.description)
         ))
+    }
+    if (minPrice) {
+        filteredToys = filteredToys.filter(toy => toy.price >= minPrice)
     }
     if (maxPrice) {
         filteredToys = filteredToys.filter(toy => toy.price <= maxPrice)
     }
     if (labels.length > 0) {
-        filteredToys = filteredToys.filter(toy => filterBy.labels.every(label => toy.labels.includes(label)))
+        filteredToys = filteredToys.filter(toy => labels.every(label => toy.labels.includes(label)))
     }
 
     if (sortBy === 'title') {
@@ -117,8 +119,10 @@ function getPageCount() {
 function _getDefaultQueryParams() {
     return {
         txt: '',
+        minPrice: '',
         maxPrice: '',
         labels: [],
+        inStock: 'all',
         sortBy: '',
         sortDir: '',
         pageIdx: 0
