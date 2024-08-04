@@ -65,6 +65,15 @@ app.get('/api/toy/labels', (req, res) => {
         })
 })
 
+app.get('/api/toy/labels/count', (req, res) => {
+    toyService.getLabelsCount()
+        .then(labelsCount => res.send(labelsCount))
+        .catch(err => {
+            loggerService.error(`Couldn't get labels count: ${err}`)
+            res.status(500).send(`Couldn't get labels count: ${err}`)
+        })
+})
+
 app.get('/api/toy/page-count', (req, res) => {
     toyService.getPageCount()
         .then(count => res.send(count + ''))

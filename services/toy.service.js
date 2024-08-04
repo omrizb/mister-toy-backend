@@ -8,6 +8,7 @@ export const toyService = {
     getEmptyToy,
     getDefaultQueryParams,
     getLabels,
+    getLabelsCount,
     getPageCount
 }
 
@@ -115,6 +116,18 @@ function getLabels() {
         return acc = [...acc, ...toy.labels]
     }, [])
     return Promise.resolve([...new Set(toyLabels)])
+}
+
+function getLabelsCount() {
+    const labelsCount = {}
+    toys.forEach(toy => {
+        toy.labels.forEach(label => {
+            if (!labelsCount[label]) labelsCount[label] = { total: 0, inStock: 0 }
+            labelsCount[label].total++
+            if (toy.inStock) labelsCount[label].inStock++
+        })
+    })
+    return Promise.resolve(labelsCount)
 }
 
 function getPageCount() {
