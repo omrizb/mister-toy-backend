@@ -19,6 +19,7 @@ function createToy() {
     const toy = toyService.getEmptyToy()
     toy._id = utilService.makeId()
     toy.name = nameMakerService.makeName()
+    toy.description = utilService.makeLorem(20)
     toy.price = utilService.getRandomIntInclusive(10, 200)
     toy.labels = utilService.getRandomItems(LABELS, utilService.getRandomIntInclusive(0, 3))
     toy.inStock = Math.random() > 0.3 ? true : false

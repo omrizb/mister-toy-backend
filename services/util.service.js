@@ -9,6 +9,7 @@ export const utilService = {
     download,
     httpGet,
     makeId,
+    makeLorem,
     deepMergeObjectsSourceKeysOnly,
     getRandomIntInclusive,
     getRandomItems,
@@ -77,6 +78,17 @@ function makeId(length = 6) {
         text += possible.charAt(Math.floor(Math.random() * possible.length))
     }
     return text
+}
+
+function makeLorem(size = 100) {
+    const words = ['The sky', 'above', 'the port', 'was', 'the color', 'of nature', 'tuned', 'to', 'a live channel', 'All', 'this happened', 'more or less', 'I', 'had', 'the story', 'bit by bit', 'from various people', 'and', 'as generally', 'happens', 'in such cases', 'each time', 'it', 'was', 'a different story', 'a pleasure', 'to', 'burn']
+    var txt = ''
+    while (size > 0) {
+        size--
+        txt += words[Math.floor(Math.random() * words.length)]
+        if (size >= 1) txt += ' '
+    }
+    return txt
 }
 
 function deepMergeObjectsSourceKeysOnly(source, target) {

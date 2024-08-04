@@ -18,7 +18,7 @@ const toys = utilService.readJsonFile(DATA_PATH)
 
 function query(queryParams = _getDefaultQueryParams()) {
     let filteredToys = toys
-    const { txt, minPrice, maxPrice, labels, sortBy, sortDir, pageIdx } = queryParams
+    const { txt, minPrice, maxPrice, labels, inStock, sortBy, sortDir, pageIdx } = queryParams
     if (txt) {
         const regExp = new RegExp(txt, 'i')
         filteredToys = filteredToys.filter(toy => (
@@ -34,6 +34,9 @@ function query(queryParams = _getDefaultQueryParams()) {
     }
     if (labels.length > 0) {
         filteredToys = filteredToys.filter(toy => labels.every(label => toy.labels.includes(label)))
+    }
+    if (inStock) {
+        filteredToys = _binaryFilterFromTxt(filteredToys, 'inStock', inStock)
     }
 
     if (sortBy === 'title') {
@@ -54,6 +57,7 @@ function query(queryParams = _getDefaultQueryParams()) {
 
 function get(toyId) {
     const toy = toys.find(toy => toy._id === toyId)
+    if (!toy) return Promise.reject(`Toy with id '${toyId}' does not exist.`)
     return Promise.resolve(toy)
 }
 
@@ -91,7 +95,8 @@ function save(toyToSave) {
 
 function getEmptyToy() {
     return Promise.resolve({
-        title: 'New toy',
+        name: 'New toy',
+        description: '',
         price: 0,
         labels: [],
         creator: {
@@ -140,4 +145,11 @@ function _removeUndefinedProps(obj) {
         }
         return acc
     }, {})
+}
+
+function _binaryFilterFromTxt(arr, fieldName, value) {
+    let filteredArr = arr
+    if (value === 'true') filteredArr = filteredArr.filter(element => element[fieldName])
+    if (value === 'false') filteredArr = filteredArr.filter(element => !element[fieldName])
+    return filteredArr
 }
